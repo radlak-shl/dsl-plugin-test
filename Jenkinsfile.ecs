@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+    options { skipDefaultCheckout(true) }
+
+    stages {
+        stage('Clone') {
+            steps {
+                script {
+                    // Clone CI repo to access apps.yaml
+                    git url: 'https://github.com/<your-org-or-user>/ci-ecs-pipelines.git', branch: 'main'
+                    
+                    def apps = readYaml file: 'ci/apps.yaml'
+                    def app  = apps.find { it.name == env.JOB_NAME }
+                    if (!app) {
+                        error "App '${env.JOB_NAME}' not found in apps.yaml"
+                    }
+
+                    echo "Cloning ${app.repo} @ ${app.branch}"
+                    git url: app.repo, branch: app.branch
+                }
+            }
+        }
+    }
+}
+
