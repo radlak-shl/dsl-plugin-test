@@ -3,8 +3,9 @@ import org.yaml.snakeyaml.Yaml
 def ciRepoUrl = 'https://github.com/<your-org-or-user>/ci-ecs-pipelines.git'
 def ciBranch  = 'main'
 
-// Read apps list from CI repo (seed job must check this out)
-def apps = new YamlSlurper().parseText(readFileFromWorkspace('ci/apps.yaml'))
+// Load the YAML file from the workspace
+def appsFile = new File("${WORKSPACE}/ci/apps.yaml")
+def apps = new Yaml().load(appsFile.text)
 
 apps.each { app ->
     pipelineJob(app.name) {
