@@ -1,4 +1,4 @@
-import groovy.yaml.YamlSlurper
+import org.yaml.snakeyaml.Yaml
 
 def ciRepoUrl = 'https://github.com/<your-org-or-user>/ci-ecs-pipelines.git'
 def ciBranch  = 'main'
