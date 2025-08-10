@@ -1,11 +1,8 @@
-import org.yaml.snakeyaml.Yaml
-
 def ciRepoUrl = 'https://github.com/<your-org-or-user>/ci-ecs-pipelines.git'
 def ciBranch  = 'main'
 
-// Load the YAML file from the workspace
-def appsFile = new File("${WORKSPACE}/ci/apps.yaml")
-def apps = new Yaml().load(appsFile.text)
+// Parse apps.json
+def apps = new groovy.json.JsonSlurper().parseText(readFileFromWorkspace('ci/apps.json'))
 
 apps.each { app ->
     pipelineJob(app.name) {

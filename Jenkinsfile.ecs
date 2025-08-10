@@ -6,13 +6,13 @@ pipeline {
         stage('Clone') {
             steps {
                 script {
-                    // Clone CI repo to access apps.yaml
+                    // Clone central CI repo to read apps.json
                     git url: 'https://github.com/<your-org-or-user>/ci-ecs-pipelines.git', branch: 'main'
-                    
-                    def apps = readYaml file: 'ci/apps.yaml'
+
+                    def apps = new groovy.json.JsonSlurper().parse(new File("ci/apps.json"))
                     def app  = apps.find { it.name == env.JOB_NAME }
                     if (!app) {
-                        error "App '${env.JOB_NAME}' not found in apps.yaml"
+                        error "App '${env.JOB_NAME}' not found in ci/apps.json"
                     }
 
                     echo "Cloning ${app.repo} @ ${app.branch}"
