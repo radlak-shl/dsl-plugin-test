@@ -1,23 +1,24 @@
 pipeline {
   agent any
-  options { skipDefaultCheckout(true) }  // keep this since we do an explicit checkout
 
   stages {
     stage('Clone') {
       steps {
         script {
+          // Checkout central CI repo (so apps.json is available)
           git url: 'https://github.com/radlak-shl/dsl-plugin-test.git', branch: 'main'
 
-          def jsonText = readFile('ci/apps.json')
-          def apps = new groovy.json.JsonSlurper().parseText(jsonText)
+          // Parse apps.json
+          def apps = new groovy.json.JsonSlurperClassic().parseText(readFile('ci/apps.json'))
+          def app  = apps.find { it.name == env.JOB_NAME }
 
-          def app = apps.find { it.name == env.JOB_NAME }
           if (!app) {
             error "App '${env.JOB_NAME}' not found in ci/apps.json"
           }
 
           echo "Cloning ${app.repo} @ ${app.branch}"
 
+          // Clone target repo into subfolder
           dir('src') {
             git url: app.repo, branch: app.branch, changelog: false, poll: false
           }
