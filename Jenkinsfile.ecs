@@ -7,7 +7,7 @@ pipeline {
             steps {
                 script {
                     // Clone central CI repo to read apps.json
-                    git url: 'https://github.com/<your-org-or-user>/ci-ecs-pipelines.git', branch: 'main'
+                    git url: 'https://github.com/radlak-shl/dsl-plugin-test.git', branch: 'main'
 
                     def apps = new groovy.json.JsonSlurper().parse(new File("ci/apps.json"))
                     def app  = apps.find { it.name == env.JOB_NAME }
