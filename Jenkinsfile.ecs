@@ -1,25 +1,29 @@
 pipeline {
-    agent any
-    options { skipDefaultCheckout(true) }
+  agent any
+  options { skipDefaultCheckout(true) }  // keep this since we do an explicit checkout
 
-    stages {
-        stage('Clone') {
-            steps {
-                script {
-                    // Clone central CI repo to read apps.json
-                    git url: 'https://github.com/radlak-shl/dsl-plugin-test.git', branch: 'main'
+  stages {
+    stage('Clone') {
+      steps {
+        script {
+          git url: 'https://github.com/radlak-shl/dsl-plugin-test.git', branch: 'main'
 
-                    def apps = new groovy.json.JsonSlurper().parse(new File("ci/apps.json"))
-                    def app  = apps.find { it.name == env.JOB_NAME }
-                    if (!app) {
-                        error "App '${env.JOB_NAME}' not found in ci/apps.json"
-                    }
+          def jsonText = readFile('ci/apps.json')
+          def apps = new groovy.json.JsonSlurper().parseText(jsonText)
 
-                    echo "Cloning ${app.repo} @ ${app.branch}"
-                    git url: app.repo, branch: app.branch
-                }
-            }
+          def app = apps.find { it.name == env.JOB_NAME }
+          if (!app) {
+            error "App '${env.JOB_NAME}' not found in ci/apps.json"
+          }
+
+          echo "Cloning ${app.repo} @ ${app.branch}"
+
+          dir('src') {
+            git url: app.repo, branch: app.branch, changelog: false, poll: false
+          }
         }
+      }
     }
+  }
 }
 
