@@ -1,4 +1,4 @@
-def ciRepoUrl = 'https://github.com/<your-org-or-user>/ci-ecs-pipelines.git'
+def ciRepoUrl = 'https://github.com/radlak-shl/ci-pipeline.git'
 def ciBranch  = 'main'
 
 // Parse apps.json

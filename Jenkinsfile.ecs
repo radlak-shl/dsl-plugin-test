@@ -1,29 +1,52 @@
 pipeline {
   agent any
-  options { skipDefaultCheckout(true) }
 
   stages {
-    stage('Clone') {
+    stage('Clean WS') {
+      steps {
+        // If you don't have Workspace Cleanup plugin, use: deleteDir()
+        cleanWs()
+      }
+    }
+
+    stage('Configure env variables') {
       steps {
         script {
-          git url: 'https://github.com/radlak-shl/dsl-plugin-test.git', branch: 'main'
+          // Re-checkout this Jenkinsfile's repo so ci/apps.json exists after clean
+          checkout scm
 
           def jsonText = readFile('ci/apps.json')
 
           // ---- SERIALIZATION-SAFE LOOKUP ----
-          def apps = new groovy.json.JsonSlurperClassic().parseText(jsonText)   // classic = HashMap/ArrayList
-          def app  = apps.find { it.name == env.JOB_NAME }
-          if (!app) { error "App '${env.JOB_NAME}' not found in ci/apps.json" }
+          def apps = new groovy.json.JsonSlurperClassic().parseText(jsonText)  // classic = HashMap/ArrayList
+          // If jobs live inside folders, JOB_BASE_NAME avoids 'folder/app' issues
+          def jobKey = env.JOB_BASE_NAME ?: env.JOB_NAME
+          def app  = apps.find { it.name == jobKey }
+          if (!app) { error "App '${jobKey}' not found in ci/apps.json" }
 
-          // Copy to plain strings and drop the heavy objects so CPS won't serialize them
-          def repo   = app.repo.toString()
-          def branch = app.branch.toString()
+          // Copy to plain strings and drop heavy objects to avoid CPS serialization issues
+          env.PROJECT   = jobKey
+          env.REPO_URL  = app.repo.toString()
+          env.BRANCH    = app.branch.toString()
           app = null; apps = null
+        }
+      }
+    }
 
-          echo "Cloning ${repo} @ ${branch}"
-          dir('src') {
-            git url: repo, branch: branch, changelog: false, poll: false
-          }
+    stage('Print variables') {
+      steps {
+        echo """
+Project  : ${env.PROJECT}
+Repo URL : ${env.REPO_URL}
+Branch   : ${env.BRANCH}
+""".trim()
+      }
+    }
+
+    stage('Clone') {
+      steps {
+        dir('src') {
+          git url: env.REPO_URL, branch: env.BRANCH, changelog: false, poll: false
         }
       }
     }
