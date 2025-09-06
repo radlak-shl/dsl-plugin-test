@@ -54,7 +54,7 @@ Branch   : ${env.BRANCH}
    stage('Docker-Build') {
       steps {
         dir('src') {
-          sh 'docker build -t ${env.PROJECT} .'
+          sh "docker build -t ${env.PROJECT} ."
         }
       }
     }
