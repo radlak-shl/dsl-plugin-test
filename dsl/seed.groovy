@@ -1,4 +1,4 @@
-def ciRepoUrl = 'https://github.com/radlak-shl/ci-pipeline.git'
+def ciRepoUrl = 'https://github.com/radlak-shl/dsl-plugin-test.git'
 def ciBranch  = 'main'
 
 // Parse apps.json
