@@ -2,17 +2,22 @@
   {
     "name": "central-scoring",
     "repo": "https://github.com/jay75chauhan/Zomato-Clone",
-    "branch": "main"
+    "branch": "main",
+    "prebuild": true,
+    "postbuild": false
   },
   {
     "name": "interview-intelligence",
     "repo": "https://github.com/your-org/Interview-Intelligence.git",
-    "branch": "develop"
+    "branch": "develop",
+    "prebuild": false,
+    "postbuild": false
   },
   {
     "name": "chatbot-delivery",
     "repo": "https://github.com/your-org/Chatbot-Delivery.git",
-    "branch": "main"
+    "branch": "main",
+    "prebuild": false,
+    "postbuild": false
   }
 ]
-
