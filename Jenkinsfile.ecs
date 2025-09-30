@@ -58,9 +58,7 @@ stage('Pre-Build') {
     expression { env.PREBUILD == "true" }
   }
   steps {
-    dir('src') {
-      sh "sh ci/${env.PROJECT}.sh prebuild"
-    }
+    sh "sh ci/${env.PROJECT}.sh prebuild"
   }
 }
 
