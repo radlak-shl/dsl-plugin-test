@@ -28,6 +28,8 @@ pipeline {
           env.PROJECT   = jobKey
           env.REPO_URL  = app.repo.toString()
           env.BRANCH    = app.branch.toString()
+          env.PREBUILD  = app.prebuild.toString()
+          env.POSTBUILD = app.postbuild.toString()
           app = null; apps = null
         }
       }
@@ -49,6 +51,17 @@ Branch   : ${env.BRANCH}
           git url: env.REPO_URL, branch: env.BRANCH, changelog: false, poll: false
         }
       }
+}
+
+stage('Pre-Build') {
+  when {
+    expression { env.PREBUILD == "true" }
+  }
+  steps {
+    dir('src') {
+      sh "sh ci/${env.PROJECT}.sh prebuild"
+    }
+  }
 }
 
    stage('Docker-Build') {
