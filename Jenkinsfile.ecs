@@ -69,6 +69,14 @@ stage('Pre-Build') {
         }
       }
     }
+
+stage('Clean WS') {
+      steps {
+        // If you don't have Workspace Cleanup plugin, use: deleteDir()
+        cleanWs()
+        sh "docker rmi ${env.PROJECT}
+      }
+    }
   }
 }
 
