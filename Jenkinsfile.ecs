@@ -65,7 +65,7 @@ stage('Pre-Build') {
    stage('Docker-Build') {
       steps {
         dir('src') {
-          sh "docker build -t ${env.PROJECT} ."
+          echo """docker build -t ${env.Project}"""
         }
       }
     }
@@ -74,7 +74,7 @@ stage('Clean WS') {
       steps {
         // If you don't have Workspace Cleanup plugin, use: deleteDir()
         cleanWs()
-        sh "docker rmi ${env.PROJECT}
+        sh "docker rmi ${env.PROJECT}"
       }
     }
   }
