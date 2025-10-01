@@ -74,7 +74,7 @@ stage('Clean WS post build') {
       steps {
         // If you don't have Workspace Cleanup plugin, use: deleteDir()
         cleanWs()
-        sh "docker rmi ${env.PROJECT}"
+        echo """docker rmi ${env.Project}"""
       }
     }
   }
