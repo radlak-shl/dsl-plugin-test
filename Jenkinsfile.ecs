@@ -70,7 +70,7 @@ stage('Pre-Build') {
       }
     }
 
-stage('Clean WS') {
+stage('Clean WS post build') {
       steps {
         // If you don't have Workspace Cleanup plugin, use: deleteDir()
         cleanWs()
